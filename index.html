@@ -1,0 +1,53 @@
+<html>
+	<head>
+		<script>
+			// sudo fallocate -l 4G filename
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', 'http://ripley:8090', true);
+			xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+			xhr.responseType = 'blob';
+			var start = (new Date()).getTime();
+			var getStatus = function(progressEvent) {
+				var end = (new Date()).getTime();
+				var ms = end - start;
+				var sec = ms / 1000;
+		
+				var loadedBytes = progressEvent.loaded;
+				var megabits = (loadedBytes / 1000000) * 8;
+				var Mbps = megabits / sec;
+				return {
+					ms: ms,
+					sec: sec,
+					loadedBytes: loadedBytes,
+					totalBytes: progressEvent.total,
+					progress: loadedBytes / progressEvent.total,
+					megabits: megabits,
+					Mbps: Mbps
+				}
+			}
+		
+			var appendRow = function(progressResult) {
+				var table = document.getElementById('t')
+				var row = table.insertRow(0);
+				var c1 = row.insertCell(0);
+				var c2 = row.insertCell(1);
+				var progressAsPercent = progressResult.progress * 100;
+
+				c1.innerHTML = String(progressAsPercent).substr(0,4) + '%';
+				c2.innerHTML = String(progressResult.Mbps).substr(0,4) + ' Mbps';
+				console.log(progressResult)
+			}
+
+			var combined = function(progressEvent) {
+				var status = getStatus(progressEvent);
+				appendRow(status)
+			}
+			xhr.onprogress = combined;
+			xhr.onload = combined;
+			xhr.send();
+		</script>
+	</head>
+	<body>
+		<table id='t'></table>
+	</body>
+</html>
