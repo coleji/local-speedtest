@@ -3,7 +3,7 @@
 		<script>
 			// sudo fallocate -l 4G filename
 			var xhr = new XMLHttpRequest();
-			xhr.open('GET', 'http://ripley:8090', true);
+			xhr.open('GET', 'http://speedtest.steingard.lan/data/50m', true);
 			xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
 			xhr.responseType = 'blob';
 			var start = (new Date()).getTime();
